@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/new_trend.iml" filepath="$PROJECT_DIR$/new_trend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/new_trend_android.iml" filepath="$PROJECT_DIR$/new_trend_android.iml" />
+    </modules>
+  </component>
+</project>
