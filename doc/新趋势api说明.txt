@@ -1,0 +1,36 @@
+项目github地址：https://github.com/HxBreak/new_trend
+
+1、查询人工智能国际会议接口 crawltime 可变
+http://www.dashixiuxiu.cn/query_aitopics?crawltime=2018-07-28
+
+
+2、区块链接口
+http://www.dashixiuxiu.cn/query_cointelegraph?crawltime=2018-07-28
+
+
+3、注册
+http://www.dashixiuxiu.cn/register_page
+
+
+4、注册提交
+    <form method="POST" action='/register_action'>
+        <label>用户名：<input type="text" name="username" value=""></label>
+        <label>密码：<input type="password" name="password" value=""></label>
+        <label>手机号：<input type="text" name="mobile" value=""></label>
+        <label>邮箱：<input type="text" name="email" value=""></label>
+        <input type="submit" value="注册">
+    </form>
+
+
+5、登录
+   http://www.dashixiuxiu.cn/login_page
+
+    <form method="POST" action='/login_action'>
+        <label>手机号：<input type="text" name="mobile" value=""></label>
+        <label>密码：<input type="password" name="password" value=""></label>
+        <input type="submit" value="登录">
+    </form>
+
+
+6、tab接口
+http://www.dashixiuxiu.cn/app_init
