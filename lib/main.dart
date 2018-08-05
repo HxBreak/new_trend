@@ -7,7 +7,18 @@ import 'dart:convert';
 
 void main() => runApp(new MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  MainScreenStateModel model;
+  @override
+  void initState() {
+    super.initState();
+    model = MainScreenStateModel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -16,7 +27,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: ScopedModel<MainScreenStateModel>(
-        model: MainScreenStateModel(),
+        model: model,
         child: new MainScreen(),
       ),
     );
