@@ -12,11 +12,10 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  MainScreenStateModel model;
+  MainStateModel model = MainStateModel();
   @override
   void initState() {
     super.initState();
-    model = MainScreenStateModel();
   }
 
   @override
@@ -26,7 +25,7 @@ class MyAppState extends State<MyApp> {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ScopedModel<MainScreenStateModel>(
+      home: ScopedModel<MainStateModel>(
         model: model,
         child: new MainScreen(),
       ),
@@ -41,7 +40,11 @@ enum MainScreenPage {
   PROFILE,
 }
 
-class MainScreenStateModel extends Model {
+class MainStateModel extends Model with BaseModel, IndexScreenStateModel {}
+
+class BaseModel extends Model {}
+
+abstract class IndexScreenStateModel extends BaseModel {
   MainScreenPage mainScreenPage = MainScreenPage.INDEX;
   int currentIndex = 0;
   List<dynamic> tabs;
@@ -73,13 +76,14 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   TabController _index_controller;
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
 
     _page_change() {
-      final model = ModelFinder<MainScreenStateModel>().of(context);
+      final model = ModelFinder<MainStateModel>().of(context);
       final key = model.tabs[_index_controller.index]['name'];
       final has = model.index_data.containsKey(key);
       if (has) {
@@ -104,7 +108,7 @@ class MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         .then((resp) {
       _index_controller =
           TabController(length: resp['Tab'].length, vsync: this);
-      final model = ModelFinder<MainScreenStateModel>().of(context);
+      final model = ModelFinder<MainStateModel>().of(context);
       model.tabs = resp['Tab'];
       _index_controller.addListener(_page_change);
       _page_change();
@@ -119,14 +123,26 @@ class MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return new ScopedModelDescendant<MainScreenStateModel>(
+    return new ScopedModelDescendant<MainStateModel>(
       builder: (context, widget, state) {
         return Scaffold(
+          key: key,
           appBar: state.mainScreenPage == MainScreenPage.INDEX
               ? buildIndexAppbar(
                   controller: _index_controller, tabs: state.tabs)
               : state.mainScreenPage == MainScreenPage.PROFILE
-                  ? AppBar(title: Text("Profile"))
+                  ? AppBar(
+                      title: Text("Profile"),
+                      actions: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.play_arrow),
+                          onPressed: () =>
+                              key.currentState.showSnackBar(SnackBar(
+                                content: Text("SnackBar From Key..."),
+                              )),
+                        )
+                      ],
+                    )
                   : AppBar(title: Text('Not Complete...')),
           body: state.mainScreenPage == MainScreenPage.INDEX
               ? _index_controller == null || state.tabs == null
