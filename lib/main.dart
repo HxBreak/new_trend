@@ -56,6 +56,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             appBar: state.basicScreenStatus == CommonPageStatus.DONE
                 ? AppBar(
                     title: Text("${state.basicCurrentTitleString}"),
+                    actions: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.account_box),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed("login");
+                        },
+                      )
+                    ],
                   )
                 : null,
             bottomNavigationBar:
@@ -71,9 +79,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 title: Text("${e['name']}")))
                             .toList()
                               ..addAll(BasicScreenStateModel.basicLocalNavItems
-                                  .map((e) => BottomNavigationBarItem(
-                                      icon: Icon(Icons.table_chart),
-                                      title: Text("data")))
+                                  .map((e) => e.item)
                                   .toList()),
                       )
                     : null);

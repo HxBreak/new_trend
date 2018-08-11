@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
+import 'dart:ui' hide Image;
 
 class ProfileScreen extends StatefulWidget {
   @override

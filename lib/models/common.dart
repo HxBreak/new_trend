@@ -7,8 +7,8 @@ class BottomNavigationItem {
   final Widget icon;
   final BottomNavigationBarItem item;
 
-  const BottomNavigationItem(String text, Widget icon)
+  BottomNavigationItem({@required String text, @required Widget icon})
       : text = text,
-        icon = icon;
-  // item = const BottomNavigationBarItem(title: Text(text), icon: icon);
+        icon = icon,
+        item = BottomNavigationBarItem(title: Text(text), icon: icon);
 }

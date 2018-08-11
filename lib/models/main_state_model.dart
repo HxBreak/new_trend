@@ -12,8 +12,10 @@ import 'package:flutter/material.dart';
 //   PROFILE,
 // }
 
+///主数据模型，需要全局使用的数据在这里添加模型
 class MainStateModel extends Model
-    with BaseModel, IndexScreenStateModel, BasicScreenStateModel {
+    with BaseModel, IndexScreenStateModel, BasicScreenStateModel //, AModel
+{
   MainStateModel() {
     initApp();
   }
@@ -27,11 +29,12 @@ abstract class BasicScreenStateModel extends BaseModel {
   CommonPageStatus basicScreenStatus = CommonPageStatus.READY;
   List basicScreenNavItems = [];
   int _currentSelNav = 0;
-  static const List<BottomNavigationItem> basicLocalNavItems = const [
-    // BottomNavigationItem(icon: Icon(Icons.forum), title: "社区"),
-    // BottomNavigationBarItem(
-    //     icon: Icon(Icons.account_circle), title: Text("用户")),
+  static final List<BottomNavigationItem> basicLocalNavItems = [
+    BottomNavigationItem(icon: Icon(Icons.forum), text: "社区"),
+    BottomNavigationItem(icon: Icon(Icons.account_circle), text: "用户"),
   ];
+
+  ///当前选中的索引
   int get basicCurrentSelNav => _currentSelNav;
 
   int get basicNavItemCount =>
@@ -42,10 +45,11 @@ abstract class BasicScreenStateModel extends BaseModel {
     notifyListeners();
   }
 
+  ///当前页面的标题文字
   String get basicCurrentTitleString {
     return _currentSelNav < basicScreenNavItems.length
         ? basicScreenNavItems[_currentSelNav]['name']
-        : "$basicNavItemCount";
+        : basicLocalNavItems[_currentSelNav - basicScreenNavItems.length]?.text;
   }
 
   Future initApp() {
@@ -59,4 +63,10 @@ abstract class BasicScreenStateModel extends BaseModel {
       basicScreenStatus = CommonPageStatus.ERROR;
     }).whenComplete(this.notifyListeners);
   }
+}
+
+///继承自BaseModel的 类
+class AModel extends BaseModel {
+  ///变量命名规范
+  double amodelXXX = 0.0;
 }
