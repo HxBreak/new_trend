@@ -3,8 +3,9 @@ import 'models.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:io';
+import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 // enum MainScreenPage {
 //   INDEX,
 //   NEWS,
@@ -26,6 +27,7 @@ class BaseModel extends Model {}
 abstract class IndexScreenStateModel extends BaseModel {}
 
 class SimplePageDataModel {
+  final start = DateTime.now().subtract(Duration(days: 1));
   List networkData = [];
   CommonPageStatus currentStatus = CommonPageStatus.READY;
 }
@@ -54,14 +56,17 @@ abstract class BasicScreenStateModel extends BaseModel {
     _basicSetCurrentData(url, index, data);
     data.currentStatus = CommonPageStatus.RUNNING;
     notifyListeners();
+    final formator = DateFormat("yyyy-MM-dd");
+    print("$url" + "?crawltime=${formator.format(data.start)}");
     return http
-        .read("$url" + "?crawltime=2018-07-28")
+        .read("$url" + "?crawltime=${formator.format(data.start)}")
         .then(json.decode)
         .then((resp) {
       data.networkData.addAll(resp['data']);
       if (resp['data'].length == 0) {
         data.currentStatus = CommonPageStatus.DONE;
       } else {
+        data.start.subtract(Duration(days: 1)); //往上调整一天
         data.currentStatus = CommonPageStatus.READY;
       }
     }).catchError(() {
