@@ -12,9 +12,9 @@ class _RegisterScreenState extends State<RegisterScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   GlobalKey<FormState> _form = new GlobalKey();
-  String _userName;
-  String _password;
-  String _rePassword;
+  String _userName="";
+  String _password="";
+  String _rePassword="";
 
   @override
   void initState() {
@@ -96,14 +96,15 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
   void _register() async{
+
     HttpClient client = HttpClient();
-    if(_userName!=null&&_password!=null&&_rePassword!=null) {
+    if(_userName.trim()!=""&&_password.trim()!=""&&_rePassword.trim()!="") {
       if (_password.trim() != _rePassword.trim()) {
         Scaffold.of(_form.currentContext).showSnackBar(
             SnackBar(content: Text("两次密码不一致!")));
         return;
       }
-       await client.postUrl(Uri.http("www.dashixiuxiu.cn","register_action")).then((request){
+      client.postUrl(Uri.http("www.dashixiuxiu.cn","register_action")).then((request){
         Map registerMes={
           "username":"$_userName",
           "password":"$_password",
@@ -112,15 +113,24 @@ class _RegisterScreenState extends State<RegisterScreen>
         };
         request.write(json.encode(registerMes));
         return request.close();
-
       }).then((response){
         response.transform(utf8.decoder).listen((result){
          var res = json.decode(result);
          print(res["status"]);
+         if(res["status"]=="success"){
+           Scaffold.of(_form.currentContext).showSnackBar(
+               SnackBar(content: Text("注册成功!")));
+         }else{
+           Scaffold.of(_form.currentContext).showSnackBar(
+               SnackBar(content: Text("注册失败!")));
+         }
         });
 
       });
-
+    }else{
+      Scaffold.of(_form.currentContext).showSnackBar(
+          SnackBar(content: Text("用户名/密码不能为空!")));
     }
   }
+
 }
