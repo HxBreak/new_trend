@@ -8,22 +8,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_trend/main.dart';
+import 'package:http/http.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(new TrendApp());
+    // await tester.pumpWidget(new TrendApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // // Verify that our counter starts at 0.
+    // expect(find.text('0'), findsOneWidget);
+    // expect(find.text('1'), findsNothing);
 
     // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // await tester.tap(find.byIcon(Icons.add));
+    // await tester.pump();
+    final resp = await post(
+      "http://www.dashixiuxiu.cn/register_action",
+      body: {
+        "username": "123123",
+        "password": "123123",
+        "mobile": "10086",
+        "email": "7777777@qq.com"
+      },
+    );
+    print([resp.statusCode, resp.body]);
 
     // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // expect(find.text('0'), findsNothing);
+    // expect(find.text('1'), findsOneWidget);
   });
 }

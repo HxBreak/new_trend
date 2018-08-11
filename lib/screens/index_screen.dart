@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:new_trend/models/models.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:new_trend/widgets/widgets.dart';
 
-class IndexScreen extends StatefulWidget {
+class GeneralContentBody extends StatefulWidget {
+  final VoidCallback loadMore;
+  final VoidCallback retry;
   final List data;
+  final CommonPageStatus status;
 
-  const IndexScreen(this.data);
+  const GeneralContentBody({this.data, this.loadMore, this.retry, this.status});
 
   @override
-  _IndexScreenState createState() => _IndexScreenState();
+  _GeneralContentBodyState createState() => _GeneralContentBodyState();
 }
 
-class _IndexScreenState extends State<IndexScreen>
+class _GeneralContentBodyState extends State<GeneralContentBody>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
 
@@ -29,31 +33,26 @@ class _IndexScreenState extends State<IndexScreen>
 
   @override
   Widget build(BuildContext context) {
-    final data = List.castFrom<dynamic, NewsItem>(widget.data);
     return ListView.builder(
-      itemCount: data.length,
       itemBuilder: (context, i) {
-        return ListTile(
-          title: Text("${data[i].cn_title}"),
-          subtitle: Text("${data[i].cn_brief}"),
-          onTap: () async {
-            launch("${data[i].content}");
-          },
+        if (i < widget.data.length) {
+          return ListTile(
+            key: Key("${widget.data[i]['url']}"),
+            isThreeLine: true,
+            title: Text("${widget.data[i]['cn_title']}"),
+            subtitle: Text("${widget.data[i]['cn_brief']}"),
+            onTap: () => launch("${widget.data[i]['url']}"),
+          );
+        }
+        if (widget.status == CommonPageStatus.READY) {
+          widget.loadMore();
+        }
+        return StatusListTile(
+          status: widget.status,
+          retry: widget.retry,
         );
       },
+      itemCount: widget.data.length + 1,
     );
   }
-}
-
-AppBar buildIndexAppbar(
-    {List<dynamic> tabs, ValueChanged<int> changed, TabController controller}) {
-  return AppBar(
-    title: Text("New Tread"),
-    bottom: tabs == null
-        ? null
-        : TabBar(
-            controller: controller,
-            tabs: tabs.map((e) => new Tab(text: e['name'])).toList(),
-          ),
-  );
 }

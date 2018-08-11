@@ -35,17 +35,75 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   AnimationController _controller;
+  Map<String, TabController> _tabMaps = Map();
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    initTabController();
+  }
+
+  void initTabController() async {
+    final model = ModelFinder<MainStateModel>().of(context);
+    await model.basicInited.future;
+    model.basicScreenNavItems.forEach((e) {
+      if ("${e['pageType']}".toLowerCase() == 'tabs') {
+        _tabMaps.putIfAbsent(
+            e['name'],
+            () => TabController(
+                length: e['tabItems'].length, vsync: this, initialIndex: 0));
+      }
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
+    _tabMaps.values.forEach((e) => e.dispose());
     _controller.dispose();
+  }
+
+  _buildMainBody(BasicScreenStateModel state) {
+    return state.basicIsCurrentPageFromNetwork
+        ? _buildNetworkBody(state)
+        : Container();
+  }
+
+  Widget _buildNetworkBody(BasicScreenStateModel state) {
+    return state.basicCurrentHasTabbar
+        ? _buildTabView(state)
+        : Center(
+            child: Text("Network"),
+          );
+  }
+
+  Widget _buildTabView(BasicScreenStateModel state) {
+    return TabBarView(
+        controller: _tabMaps[state.basicCurrentTitleString],
+        children: state.basicScreenNavItems[state.basicCurrentSelNav]
+            ['tabItems'].map<Widget>((e) {
+          final currentIndex =
+              _tabMaps[state.basicCurrentTitleString]?.index ?? 0;
+          final page = state.basicGetCurrentData(e['bodyUrl'], currentIndex);
+          return GeneralContentBody(
+            data: page.networkData,
+            loadMore: () =>
+                state.basicCurrentLoadMoreData(e['bodyUrl'], currentIndex),
+            retry: () {},
+            status: page.currentStatus,
+          );
+        }).toList());
+  }
+
+// Text(e['bodyUrl'])
+  PreferredSizeWidget _buildBottomBar(BasicScreenStateModel state) {
+    return TabBar(
+      tabs: state.basicScreenNavItems[state.basicCurrentSelNav]['tabItems']
+          .map<Tab>((e) => Tab(text: e['name']))
+          .toList(),
+      controller: _tabMaps[state.basicCurrentTitleString],
+    );
   }
 
   @override
@@ -64,8 +122,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         },
                       )
                     ],
+                    bottom: state.basicCurrentHasTabbar
+                        ? _buildBottomBar(state)
+                        : null,
                   )
                 : null,
+            body: _buildMainBody(state),
             bottomNavigationBar:
                 state.basicScreenStatus == CommonPageStatus.DONE
                     ? BottomNavigationBar(
@@ -87,17 +149,3 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 }
-
-// class BottomNavigationBarItemNetwork {
-//   final String name;
-//   final String iconUrl;
-//   final String entityUrl;
-//   final int urlType; //保留字段，标识此Url的处理类型，有无子Tab之类的
-// }
-
-// class TabBarItemNetwork {
-//   final String name;
-//   final String optIconUrl;
-//   final String bodyUrl;
-//   final int urlType; //保留字段，标识此Url的处理类型，有无子Tab之类的
-// }
