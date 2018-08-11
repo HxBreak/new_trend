@@ -66,7 +66,7 @@ abstract class BasicScreenStateModel extends BaseModel {
       if (resp['data'].length == 0) {
         data.currentStatus = CommonPageStatus.DONE;
       } else {
-        data.start.subtract(Duration(days: 1)); //往上调整一天
+        data.start.subtract(Duration(days: 1)); //往上调整一天，暂时没有数据支撑
         data.currentStatus = CommonPageStatus.READY;
       }
     }).catchError(() {

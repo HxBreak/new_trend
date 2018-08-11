@@ -8,8 +8,10 @@ class GeneralContentBody extends StatefulWidget {
   final VoidCallback retry;
   final List data;
   final CommonPageStatus status;
+  final PageStorageKey<String> key;
 
-  const GeneralContentBody({this.data, this.loadMore, this.retry, this.status});
+  const GeneralContentBody(
+      {this.data, this.loadMore, this.retry, this.status, this.key});
 
   @override
   _GeneralContentBodyState createState() => _GeneralContentBodyState();
@@ -34,6 +36,7 @@ class _GeneralContentBodyState extends State<GeneralContentBody>
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      key: widget.key,
       itemBuilder: (context, i) {
         if (i < widget.data.length) {
           return ListTile(

@@ -67,14 +67,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   _buildMainBody(BasicScreenStateModel state) {
     return state.basicIsCurrentPageFromNetwork
         ? _buildNetworkBody(state)
-        : Container();
+        : Center(child: Text("Local Page"));
   }
 
   Widget _buildNetworkBody(BasicScreenStateModel state) {
     return state.basicCurrentHasTabbar
         ? _buildTabView(state)
         : Center(
-            child: Text("Network"),
+            child: Text("Network Page"),
           );
   }
 
@@ -87,6 +87,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               _tabMaps[state.basicCurrentTitleString]?.index ?? 0;
           final page = state.basicGetCurrentData(e['bodyUrl'], currentIndex);
           return GeneralContentBody(
+            key: PageStorageKey<String>("${e['bodyUrl']}-$currentIndex"),
             data: page.networkData,
             loadMore: () =>
                 state.basicCurrentLoadMoreData(e['bodyUrl'], currentIndex),
