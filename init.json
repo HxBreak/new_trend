@@ -1,0 +1,40 @@
+{
+    "status": "success",
+    "BottomBarItem": [
+        {
+            "name": "首页",
+            "iconUrl": "url",
+            "pageType": "tabs",
+            "tabItems": [
+                {
+                    "name": "人工智能",
+                    "bodyUrl": "http://www.dashixiuxiu.cn/query_aitopics",
+                    "optIconUrl": "url",
+                    "urlType": 1
+                },
+                {
+                    "name": "区块链",
+                    "bodyUrl": "http://www.dashixiuxiu.cn/query_cointelegraph",
+                    "optIconUrl": "url",
+                    "urlType": 1
+                },
+                {
+                    "name": "社会热点",
+                    "bodyUrl": "http://www.dashixiuxiu.cn/query_aitopics",
+                    "optIconUrl": "url",
+                    "urlType": 1
+                }
+            ]
+        },
+        {
+            "name": "游戏",
+            "iconUrl": "url",
+            "pageType": "Empty"
+        },
+        {
+            "name": "众筹",
+            "iconUrl": "url",
+            "pageType": "Empty"
+        }
+    ]
+}
