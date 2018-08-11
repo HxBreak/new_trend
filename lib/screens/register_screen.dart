@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -9,6 +12,9 @@ class _RegisterScreenState extends State<RegisterScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   GlobalKey<FormState> _form = new GlobalKey();
+  String _userName;
+  String _password;
+  String _rePassword;
 
   @override
   void initState() {
@@ -44,6 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       hintText: "用户名",
                       border: UnderlineInputBorder(),
                     ),
+                    onFieldSubmitted: (value)=>_userName = value,
                   ),
                   TextFormField(
                     maxLength: 24,
@@ -52,6 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       hintText: "密码",
                       border: UnderlineInputBorder(),
                     ),
+                    onFieldSubmitted: (value)=>_password=value,
                   ),
                   TextFormField(
                     maxLength: 24,
@@ -60,6 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       hintText: "重复密码",
                       border: UnderlineInputBorder(),
                     ),
+                    onFieldSubmitted: (value)=>_rePassword=value,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -74,6 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                           label: Text("注册"),
                           onPressed: () {
                             _form.currentState.validate();
+                            _register();
                           }),
                     ],
                   )
@@ -84,5 +94,33 @@ class _RegisterScreenState extends State<RegisterScreen>
         ),
       ),
     );
+  }
+  void _register() async{
+    HttpClient client = HttpClient();
+    if(_userName!=null&&_password!=null&&_rePassword!=null) {
+      if (_password.trim() != _rePassword.trim()) {
+        Scaffold.of(_form.currentContext).showSnackBar(
+            SnackBar(content: Text("两次密码不一致!")));
+        return;
+      }
+       await client.postUrl(Uri.http("www.dashixiuxiu.cn","register_action")).then((request){
+        Map registerMes={
+          "username":"$_userName",
+          "password":"$_password",
+          "mobile":"10086",
+          "email":"7777777@qq.com"
+        };
+        request.write(json.encode(registerMes));
+        return request.close();
+
+      }).then((response){
+        response.transform(utf8.decoder).listen((result){
+         var res = json.decode(result);
+         print(res["status"]);
+        });
+
+      });
+
+    }
   }
 }
