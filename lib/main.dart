@@ -49,10 +49,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     await model.basicInited.future;
     model.basicScreenNavItems.forEach((e) {
       if ("${e['pageType']}".toLowerCase() == 'tabs') {
-        _tabMaps.putIfAbsent(
-            e['name'],
-            () => TabController(
-                length: e['tabItems'].length, vsync: this, initialIndex: 0));
+        final tab = TabController(
+            length: e['tabItems'].length, vsync: this, initialIndex: 0);
+        tab.addListener(() => setState(() {
+              print(tab.index);
+            }));
+        _tabMaps.putIfAbsent(e['name'], () => tab);
       }
     });
   }
@@ -83,8 +85,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         controller: _tabMaps[state.basicCurrentTitleString],
         children: state.basicScreenNavItems[state.basicCurrentSelNav]
             ['tabItems'].map<Widget>((e) {
-          final currentIndex =
-              _tabMaps[state.basicCurrentTitleString]?.index ?? 0;
+          final currentIndex = _tabMaps[state.basicCurrentTitleString].index;
+          // print([e['bodyUrl'], currentIndex]);
           final page = state.basicGetCurrentData(e['bodyUrl'], currentIndex);
           return GeneralContentBody(
             key: PageStorageKey<String>("${e['bodyUrl']}-$currentIndex"),
@@ -97,7 +99,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         }).toList());
   }
 
-// Text(e['bodyUrl'])
   PreferredSizeWidget _buildBottomBar(BasicScreenStateModel state) {
     return TabBar(
       tabs: state.basicScreenNavItems[state.basicCurrentSelNav]['tabItems']

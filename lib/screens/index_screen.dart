@@ -40,7 +40,7 @@ class _GeneralContentBodyState extends State<GeneralContentBody>
       itemBuilder: (context, i) {
         if (i < widget.data.length) {
           return ListTile(
-            key: Key("${widget.data[i]['url']}"),
+            // key: Key("${widget.data[i]['url']}"),
             isThreeLine: true,
             title: Text("${widget.data[i]['cn_title']}"),
             subtitle: Text("${widget.data[i]['cn_brief']}"),

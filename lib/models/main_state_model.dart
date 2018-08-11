@@ -27,7 +27,7 @@ class BaseModel extends Model {}
 abstract class IndexScreenStateModel extends BaseModel {}
 
 class SimplePageDataModel {
-  final start = DateTime.now().subtract(Duration(days: 1));
+  var start = DateTime.now().subtract(Duration(days: 1));
   List networkData = [];
   CommonPageStatus currentStatus = CommonPageStatus.READY;
 }
@@ -57,7 +57,7 @@ abstract class BasicScreenStateModel extends BaseModel {
     data.currentStatus = CommonPageStatus.RUNNING;
     notifyListeners();
     final formator = DateFormat("yyyy-MM-dd");
-    print("$url" + "?crawltime=${formator.format(data.start)}");
+    print("$url" + "?crawltime=${formator.format(data.start)} start");
     return http
         .read("$url" + "?crawltime=${formator.format(data.start)}")
         .then(json.decode)
@@ -66,12 +66,16 @@ abstract class BasicScreenStateModel extends BaseModel {
       if (resp['data'].length == 0) {
         data.currentStatus = CommonPageStatus.DONE;
       } else {
-        data.start.subtract(Duration(days: 1)); //往上调整一天，暂时没有数据支撑
+        data.start = data.start.subtract(Duration(days: 1)); //往上调整一天，暂时没有数据支撑
         data.currentStatus = CommonPageStatus.READY;
       }
-    }).catchError(() {
+    }).catchError((e) {
+      print(e);
       data.currentStatus = CommonPageStatus.ERROR;
-    }).whenComplete(this.notifyListeners);
+    }).whenComplete(() {
+      print("task end");
+      this.notifyListeners();
+    });
   }
 
   ///当前选中的索引
