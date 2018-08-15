@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:new_trend/utils/constants.dart' as constants;
 import 'package:http/http.dart';
 
 import 'package:flutter/material.dart';
@@ -98,40 +98,29 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   void _register() async {
-    // if(_userName.trim()!=""&&_password.trim()!=""&&_rePassword.trim()!="") {
-    // if (_password.trim() != _rePassword.trim()) {
-    //   Scaffold.of(_form.currentContext).showSnackBar(
-    //       SnackBar(content: Text("两次密码不一致!")));
-    //   return;
-    // }
-
-    post("http://www.dashixiuxiu.cn/register_action", body: {
-      "username": "$_userName",
-      "password": "$_password",
-      "mobile": "10086",
-      "email": "7777777@qq.com"
+     if(_userName.trim()!=""&&_password.trim()!=""&&_rePassword.trim()!="") {
+     if (_password.trim() != _rePassword.trim()) {
+      _showMessage("两次密码不一致,请核对后再次输入!");
+       return;
+     }
+    post(constants.registerAction, body: {
+      constants.username: "$_userName",
+      constants.password: "$_password",
+      constants.mobile: "10086",
+      constants.email: "7777777@qq.com"
     }).then((response) {
       var res = json.decode(response.body);
-      print(res["status"]);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(res["status"]),
-              content: Text("$res"),
-            );
-          });
-      // if (res["status"] == "success") {
-      //   Scaffold.of(_form.currentContext)
-      //       .showSnackBar(SnackBar(content: Text("注册成功!")));
-      // } else {
-      //   Scaffold.of(_form.currentContext)
-      //       .showSnackBar(SnackBar(content: Text("注册失败!")));
-      // }
+      print(res[constants.status]);
+      var registerStatus = res["status"];
+      if(registerStatus==constants.success) _showMessage("注册成功!");
+      else _showMessage("注册失败!");
     });
-    // }else{
-    //   Scaffold.of(_form.currentContext).showSnackBar(
-    //       SnackBar(content: Text("用户名/密码不能为空!")));
-    // }
+     }else{
+       _showMessage("用户名/密码不能为空!");
+     }
+  }
+  void _showMessage(String message){
+    Scaffold.of(_form.currentContext).showSnackBar(
+        SnackBar(content: Text(message)));
   }
 }
