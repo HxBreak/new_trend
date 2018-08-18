@@ -3,7 +3,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:new_trend/screens/screens.dart';
 import 'package:http/http.dart' as http;
 import 'package:new_trend/models/models.dart';
-import 'dart:convert';
 
 void main() => runApp(new TrendApp());
 
@@ -84,7 +83,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     return TabBarView(
         controller: _tabMaps[state.basicCurrentTitleString],
         children: state.basicScreenNavItems[state.basicCurrentSelNav]
-            ['tabItems'].map<Widget>((e) {
+                ['tabItems']
+            .map<Widget>((e) {
           final currentIndex = _tabMaps[state.basicCurrentTitleString].index;
           // print([e['bodyUrl'], currentIndex]);
           final page = state.basicGetCurrentData(e['bodyUrl'], currentIndex);
