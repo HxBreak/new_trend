@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_trend/main.dart';
-import 'package:http/http.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
@@ -22,16 +21,6 @@ void main() {
     // Tap the '+' icon and trigger a frame.
     // await tester.tap(find.byIcon(Icons.add));
     // await tester.pump();
-    final resp = await post(
-      "http://www.dashixiuxiu.cn/register_action",
-      body: {
-        "username": "123123",
-        "password": "123123",
-        "mobile": "10086",
-        "email": "7777777@qq.com"
-      },
-    );
-    print([resp.statusCode, resp.body]);
 
     // Verify that our counter has incremented.
     // expect(find.text('0'), findsNothing);

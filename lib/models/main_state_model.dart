@@ -51,17 +51,27 @@ abstract class BasicScreenStateModel extends BaseModel {
     basicScreenData['$url-$index'] = data;
   }
 
-  Future basicCurrentLoadMoreData(String url, int index) {
-    final data = basicGetCurrentData(url, index);
+  ///加载更多数据
+  Future basicCurrentLoadMoreData(
+    String url,
+    int index, {
+    bool refresh = false,
+  }) {
+    var data = basicGetCurrentData(url, index);
     _basicSetCurrentData(url, index, data);
     data.currentStatus = CommonPageStatus.RUNNING;
     notifyListeners();
     final formator = DateFormat("yyyy-MM-dd");
-    print("$url" + "?crawltime=${formator.format(data.start)} start");
+    if (refresh) {
+      data.start = DateTime.now().subtract(Duration(days: 1)); //重置进度
+    }
     return http
         .read("$url" + "?crawltime=${formator.format(data.start)}")
         .then(json.decode)
         .then((resp) {
+      if (refresh) {
+        data.networkData = [];
+      }
       data.networkData.addAll(resp['data']);
       if (resp['data'].length == 0) {
         data.currentStatus = CommonPageStatus.DONE;
@@ -73,7 +83,6 @@ abstract class BasicScreenStateModel extends BaseModel {
       print(e);
       data.currentStatus = CommonPageStatus.ERROR;
     }).whenComplete(() {
-      print("task end");
       this.notifyListeners();
     });
   }

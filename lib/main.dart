@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:new_trend/screens/screens.dart';
-import 'package:http/http.dart' as http;
 import 'package:new_trend/models/models.dart';
 
 void main() => runApp(new TrendApp());
@@ -45,14 +44,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void initTabController() async {
     final model = ModelFinder<MainStateModel>().of(context);
-    await model.basicInited.future;
+    await model.basicInited.future; //阻塞初始化状态，等待网络请求完成后初始化TabController
     model.basicScreenNavItems.forEach((e) {
       if ("${e['pageType']}".toLowerCase() == 'tabs') {
         final tab = TabController(
             length: e['tabItems'].length, vsync: this, initialIndex: 0);
-        tab.addListener(() => setState(() {
-              print(tab.index);
-            }));
+        tab.addListener(() => setState(() {}));
         _tabMaps.putIfAbsent(e['name'], () => tab);
       }
     });
@@ -66,7 +63,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   _buildMainBody(BasicScreenStateModel state) {
-    return state.basicIsCurrentPageFromNetwork
+    return state.basicIsCurrentPageFromNetwork || !state.basicInited.isCompleted
         ? _buildNetworkBody(state)
         : Center(child: Text("Local Page"));
   }
@@ -75,30 +72,35 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     return state.basicCurrentHasTabbar
         ? _buildTabView(state)
         : Center(
-            child: Text("Network Page"),
+            child: CircularProgressIndicator(),
           );
   }
 
+  ///构建可左右滑动的Body
   Widget _buildTabView(BasicScreenStateModel state) {
     return TabBarView(
         controller: _tabMaps[state.basicCurrentTitleString],
-        children: state.basicScreenNavItems[state.basicCurrentSelNav]
-                ['tabItems']
-            .map<Widget>((e) {
-          final currentIndex = _tabMaps[state.basicCurrentTitleString].index;
-          // print([e['bodyUrl'], currentIndex]);
-          final page = state.basicGetCurrentData(e['bodyUrl'], currentIndex);
+        children: List.generate<Widget>(
+            state.basicScreenNavItems[state.basicCurrentSelNav]['tabItems']
+                .length, (i) {
+          final e = state.basicScreenNavItems[state.basicCurrentSelNav]
+              ['tabItems'][i];
+          final page = state.basicGetCurrentData(e['bodyUrl'], i);
           return GeneralContentBody(
-            key: PageStorageKey<String>("${e['bodyUrl']}-$currentIndex"),
+            key: PageStorageKey<String>("${e['bodyUrl']}-$i"),
             data: page.networkData,
-            loadMore: () =>
-                state.basicCurrentLoadMoreData(e['bodyUrl'], currentIndex),
+            loadMore: () => state.basicCurrentLoadMoreData(e['bodyUrl'], i),
             retry: () {},
+            onRefresh: () async {
+              await state.basicCurrentLoadMoreData(e['bodyUrl'], i,
+                  refresh: true);
+            },
             status: page.currentStatus,
           );
-        }).toList());
+        }));
   }
 
+  ///构建TabBar
   PreferredSizeWidget _buildBottomBar(BasicScreenStateModel state) {
     return TabBar(
       tabs: state.basicScreenNavItems[state.basicCurrentSelNav]['tabItems']

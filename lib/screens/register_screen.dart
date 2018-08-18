@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:new_trend/utils/constants.dart' as constants;
+import 'package:http/http.dart';
 
 import 'package:flutter/material.dart';
 
@@ -12,9 +13,9 @@ class _RegisterScreenState extends State<RegisterScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   GlobalKey<FormState> _form = new GlobalKey();
-  String _userName="";
-  String _password="";
-  String _rePassword="";
+  String _userName = "";
+  String _password = "";
+  String _rePassword = "";
 
   @override
   void initState() {
@@ -50,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       hintText: "用户名",
                       border: UnderlineInputBorder(),
                     ),
-                    onFieldSubmitted: (value)=>_userName = value,
+                    onFieldSubmitted: (value) => _userName = value,
                   ),
                   TextFormField(
                     maxLength: 24,
@@ -59,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       hintText: "密码",
                       border: UnderlineInputBorder(),
                     ),
-                    onFieldSubmitted: (value)=>_password=value,
+                    onFieldSubmitted: (value) => _password = value,
                   ),
                   TextFormField(
                     maxLength: 24,
@@ -68,7 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       hintText: "重复密码",
                       border: UnderlineInputBorder(),
                     ),
-                    onFieldSubmitted: (value)=>_rePassword=value,
+                    onFieldSubmitted: (value) => _rePassword = value,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -82,7 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                           icon: Icon(Icons.hd),
                           label: Text("注册"),
                           onPressed: () {
-                            _form.currentState.validate();
+                            // _form.currentState.validate();
                             _register();
                           }),
                     ],
@@ -95,42 +96,31 @@ class _RegisterScreenState extends State<RegisterScreen>
       ),
     );
   }
-  void _register() async{
 
-    HttpClient client = HttpClient();
-    if(_userName.trim()!=""&&_password.trim()!=""&&_rePassword.trim()!="") {
-      if (_password.trim() != _rePassword.trim()) {
-        Scaffold.of(_form.currentContext).showSnackBar(
-            SnackBar(content: Text("两次密码不一致!")));
-        return;
-      }
-      client.postUrl(Uri.http("www.dashixiuxiu.cn","register_action")).then((request){
-        Map registerMes={
-          "username":"$_userName",
-          "password":"$_password",
-          "mobile":"10086",
-          "email":"7777777@qq.com"
-        };
-        request.write(json.encode(registerMes));
-        return request.close();
-      }).then((response){
-        response.transform(utf8.decoder).listen((result){
-         var res = json.decode(result);
-         print(res["status"]);
-         if(res["status"]=="success"){
-           Scaffold.of(_form.currentContext).showSnackBar(
-               SnackBar(content: Text("注册成功!")));
-         }else{
-           Scaffold.of(_form.currentContext).showSnackBar(
-               SnackBar(content: Text("注册失败!")));
-         }
-        });
-
-      });
-    }else{
-      Scaffold.of(_form.currentContext).showSnackBar(
-          SnackBar(content: Text("用户名/密码不能为空!")));
-    }
+  void _register() async {
+     if(_userName.trim()!=""&&_password.trim()!=""&&_rePassword.trim()!="") {
+     if (_password.trim() != _rePassword.trim()) {
+      _showMessage("两次密码不一致,请核对后再次输入!");
+       return;
+     }
+    post(constants.registerAction, body: {
+      constants.username: "$_userName",
+      constants.password: "$_password",
+      constants.mobile: "10086",
+      constants.email: "7777777@qq.com"
+    }).then((response) {
+      var res = json.decode(response.body);
+      print(res[constants.status]);
+      var registerStatus = res["status"];
+      if(registerStatus==constants.success) _showMessage("注册成功!");
+      else _showMessage("注册失败!");
+    });
+     }else{
+       _showMessage("用户名/密码不能为空!");
+     }
   }
-
+  void _showMessage(String message){
+    Scaffold.of(_form.currentContext).showSnackBar(
+        SnackBar(content: Text(message)));
+  }
 }
