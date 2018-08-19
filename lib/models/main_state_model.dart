@@ -40,7 +40,7 @@ abstract class BasicScreenStateModel extends BaseModel {
   Map<String, SimplePageDataModel> basicScreenData = Map();
   static final List<BottomNavigationItem> basicLocalNavItems = [
     BottomNavigationItem(icon: Icon(Icons.forum), text: "社区"),
-    BottomNavigationItem(icon: Icon(Icons.account_circle), text: "用户"),
+    BottomNavigationItem(icon: Icon(Icons.account_circle), text: "我的"),
   ];
 
   SimplePageDataModel basicGetCurrentData(String url, int index) {
