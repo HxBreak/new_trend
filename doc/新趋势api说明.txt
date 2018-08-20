@@ -1,36 +1,125 @@
-é¡¹ç›®githubåœ°å€ï¼šhttps://github.com/HxBreak/new_trend
+ÏîÄ¿githubµØÖ·£ºhttps://github.com/HxBreak/new_trend
 
-1ã€æŸ¥è¯¢äººå·¥æ™ºèƒ½å›½é™…ä¼šè®®æ¥å£ crawltime å¯å˜
+1¡¢²éÑ¯ÈË¹¤ÖÇÄÜ¹ú¼Ê»áÒé½Ó¿Ú crawltime ¿É±ä
 http://www.dashixiuxiu.cn/query_aitopics?crawltime=2018-07-28
 
 
-2ã€åŒºå—é“¾æ¥å£
+2¡¢Çø¿éÁ´½Ó¿Ú
 http://www.dashixiuxiu.cn/query_cointelegraph?crawltime=2018-07-28
 
 
-3ã€æ³¨å†Œ
+3¡¢×¢²á
 http://www.dashixiuxiu.cn/register_page
 
 
-4ã€æ³¨å†Œæäº¤
+4¡¢×¢²áÌá½»
+    http://www.dashixiuxiu.cn/register_action
+    ÇëÇó·½Ê½£ºpost
+    Ìá½»×Ö¶Î£º
+              username
+              password
+              mobile
+              email
+     ·µ»Ø²ÎÊı£º
+             ³É¹¦£º{"status": "success"}
+             Ê§°Ü£º{"status": "failed"}
+             
     <form method="POST" action='/register_action'>
-        <label>ç”¨æˆ·åï¼š<input type="text" name="username" value=""></label>
-        <label>å¯†ç ï¼š<input type="password" name="password" value=""></label>
-        <label>æ‰‹æœºå·ï¼š<input type="text" name="mobile" value=""></label>
-        <label>é‚®ç®±ï¼š<input type="text" name="email" value=""></label>
-        <input type="submit" value="æ³¨å†Œ">
+        <label>ÓÃ»§Ãû£º<input type="text" name="username" value=""></label>
+        <label>ÃÜÂë£º<input type="password" name="password" value=""></label>
+        <label>ÊÖ»úºÅ£º<input type="text" name="mobile" value=""></label>
+        <label>ÓÊÏä£º<input type="text" name="email" value=""></label>
+        <input type="submit" value="×¢²á">
     </form>
 
 
-5ã€ç™»å½•
+5¡¢µÇÂ¼
    http://www.dashixiuxiu.cn/login_page
 
     <form method="POST" action='/login_action'>
-        <label>æ‰‹æœºå·ï¼š<input type="text" name="mobile" value=""></label>
-        <label>å¯†ç ï¼š<input type="password" name="password" value=""></label>
-        <input type="submit" value="ç™»å½•">
+        <label>ÊÖ»úºÅ£º<input type="text" name="mobile" value=""></label>
+        <label>ÃÜÂë£º<input type="password" name="password" value=""></label>
+        <input type="submit" value="µÇÂ¼">
     </form>
+    
+    http://www.dashixiuxiu.cn/login_action
+    
+    {"status": "success","token":""}
 
 
-6ã€tabæ¥å£
+6¡¢tab½Ó¿Ú
 http://www.dashixiuxiu.cn/app_init
+Ê×Ò³¡¢ÓÎÏ·¡¢ÖÚ³ï¡¢ÎÒµÄ
+Ê×Ò³¡¢ÌÇ¹û¡¢ÉçÈº¡¢ÎÒµÄ
+
+
+7¡¢app¸üĞÂ½Ó¿Ú(ĞÂ)
+   http://www.dashixiuxiu.cn/app_version?version_num=version_num
+   
+	·µ»ØÖµ:
+		Ã»ÓĞĞÂ°æ±¾£º
+			{"status": "already_new"}
+	
+		ÓĞĞÂ°æ±¾£º
+			{
+	                    
+			"status": "need_update",
+	                    
+			"version_content": "version_content",
+	                    
+			"app_url": "app_url",
+	                    
+			"version_num": "version_num"               
+			}
+
+
+8¡¢·¢²¼ÈÎÎñ½Ó¿Ú(ĞÂ)
+def send_task():
+    user_info = {'task_name': '13910227615',
+                 'task_desc': '123456',
+                 'reward': '123456',
+                 'token': 'eyJleHAiOjE1MzQ1MjQwMjcsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTM0NTIzNDI3fQ.eyJ1c2VyX2lkIjoxfQ.4ZHYM2yDCw9txSrgPvQkSeLUNRTljcu13-4hFsirayw',
+                 'task_finish_time': '1534520267',
+                 }
+    r = requests.post("http://127.0.0.1:5001/send_task", data=user_info)
+    print(r.text)
+
+
+9¡¢²éÑ¯ÈÎÎñ½Ó¿Ú(ĞÂ)
+def query_crowdfunding_tasks():
+    user_info = {
+                 'task_status': 0,
+                 'token': 'eyJleHAiOjE1MzQ1MjQwMjcsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTM0NTIzNDI3fQ.eyJ1c2VyX2lkIjoxfQ.4ZHYM2yDCw9txSrgPvQkSeLUNRTljcu13-4hFsirayw'
+                 }
+    r = requests.post("http://127.0.0.1:5001/query_crowdfunding_tasks", data=user_info)
+    print(r.text)
+
+
+10¡¢²éÑ¯×Ô¼º·¢²¼ºÍÈÏÁìµÄÈÎÎñ½Ó¿Ú(ĞÂ)
+def query_my_crowdfunding_tasks():
+    user_info = {
+                 'task_status': 0,
+                 'token': 'eyJleHAiOjE1MzQ1MjQwMjcsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTM0NTIzNDI3fQ.eyJ1c2VyX2lkIjoxfQ.4ZHYM2yDCw9txSrgPvQkSeLUNRTljcu13-4hFsirayw'
+                 }
+    r = requests.post("http://127.0.0.1:5001/query_crowdfunding_tasks", data=user_info)
+    print(r.text)
+
+
+11¡¢ÈÏÁìÈÎÎñ½Ó¿Ú(ĞÂ)
+def participant_task():
+    user_info = {
+                 'task_id': 1,
+                 'token': 'eyJleHAiOjE1MzQ1MjU0MjYsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTM0NTI0ODI2fQ.eyJ1c2VyX2lkIjoxfQ.s6cajGhUHRPD9rJWdhfpqOlQh1YzqZrheDt-lfyIFmY'
+                 }
+    r = requests.post("http://127.0.0.1:5001/participant_task", data=user_info)
+    print(r.text)
+    
+
+12¡¢½áÊøÈÎÎñ½Ó¿Ú(ĞÂ)
+def finish_task():
+    user_info = {
+                 'task_id': 1,
+                 'token': 'eyJhbGciOiJIUzI1NiIsImlhdCI6MTUzNDUyNTUzMywiZXhwIjoxNTM0NTI2MTMzfQ.eyJ1c2VyX2lkIjoxfQ.AT4IU0tYywtPG04JME-6wCe54mO7nATuAJ2W7VZStK4'
+                 }
+    r = requests.post("http://127.0.0.1:5001/finish_task", data=user_info)
+    print(r.text)
