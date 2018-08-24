@@ -1,42 +1,38 @@
-import 'dart:convert' show json;
+import 'package:json_annotation/json_annotation.dart';
 
-class NewsItem {
-  String cn_brief;
-  String cn_title;
+part 'news_models.g.dart';
+
+@JsonSerializable()
+class NewsItem extends Object with _$NewsItemSerializerMixin {
+  @JsonKey(name: "cn_brief")
+  String cnBrief;
+  @JsonKey(name: "cn_title")
+  String cnTitle;
   String content;
-  String crawltime;
-  String en_brief;
-  String en_title;
+  @JsonKey(name: "crawltime")
+  String crawlTime;
+  @JsonKey(name: "en_brief")
+  String enBrief;
+  @JsonKey(name: "en_title")
+  String enTitle;
   String md5;
   String url;
 
-  NewsItem.fromParams(
-      {this.cn_brief,
-      this.cn_title,
+  NewsItem(
+      {this.cnBrief,
+      this.cnTitle,
       this.content,
-      this.crawltime,
-      this.en_brief,
-      this.en_title,
+      this.crawlTime,
+      this.enBrief,
+      this.enTitle,
       this.md5,
       this.url});
 
-  factory NewsItem(jsonStr) => jsonStr is String
-      ? NewsItem.fromJson(json.decode(jsonStr))
-      : NewsItem.fromJson(jsonStr);
-
-  NewsItem.fromJson(jsonRes) {
-    cn_brief = jsonRes['cn_brief'];
-    cn_title = jsonRes['cn_title'];
-    content = jsonRes['content'];
-    crawltime = jsonRes['crawltime'];
-    en_brief = jsonRes['en_brief'];
-    en_title = jsonRes['en_title'];
-    md5 = jsonRes['md5'];
-    url = jsonRes['url'];
-  }
+  factory NewsItem.fromJson(Map<String, dynamic> json) =>
+      _$NewsItemFromJson(json);
 
   @override
   String toString() {
-    return '{"cn_brief": ${cn_brief != null?'${json.encode(cn_brief)}':'null'},"cn_title": ${cn_title != null?'${json.encode(cn_title)}':'null'},"content": ${content != null?'${json.encode(content)}':'null'},"crawltime": ${crawltime != null?'${json.encode(crawltime)}':'null'},"en_brief": ${en_brief != null?'${json.encode(en_brief)}':'null'},"en_title": ${en_title != null?'${json.encode(en_title)}':'null'},"md5": ${md5 != null?'${json.encode(md5)}':'null'},"url": ${url != null?'${json.encode(url)}':'null'}}';
+    return 'NewsItem{cnBrief: $cnBrief, cnTitle: $cnTitle, content: $content, crawlTime: $crawlTime, enBrief: $enBrief, enTitle: $enTitle, md5: $md5, url: $url}';
   }
 }

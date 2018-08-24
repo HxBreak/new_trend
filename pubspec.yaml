@@ -16,10 +16,14 @@ dependencies:
   cupertino_icons: ^0.1.2
   url_launcher: ^3.0.3
   intl: ^0.15.7
+  json_annotation: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: any
+  json_serializable: any
+
 
 
 # For information on the generic Dart part of this file, see the
