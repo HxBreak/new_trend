@@ -155,15 +155,15 @@ class UserAuth extends BaseModel {
   }
 
   Future<String> get token async{
-    if(!_isLogin){//未登录
-      return null;
-    }
     if(_token!=null){//_token不为空
       return token;
     }
     else{
       final SharedPreferences prefs = await _prefs;
       _token = prefs.getString("token");
+      if(!_isLogin){//未登录
+        return null;
+      }
       _isLogin = true;
       notifyListeners();
       return _token;
