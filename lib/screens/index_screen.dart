@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:new_trend/models/models.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:new_trend/widgets/widgets.dart';
-import 'dart:async';
 
 class GeneralContentBody extends StatefulWidget {
   final VoidCallback loadMore;

@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // enum MainScreenPage {
 //   INDEX,
 //   NEWS,
@@ -38,6 +39,7 @@ abstract class BasicScreenStateModel extends BaseModel {
   int _currentSelNav = 0;
   Completer<Null> basicInited = Completer();
   Map<String, SimplePageDataModel> basicScreenData = Map();
+
   static final List<BottomNavigationItem> basicLocalNavItems = [
     BottomNavigationItem(icon: Icon(Icons.forum), text: "社区"),
     BottomNavigationItem(icon: Icon(Icons.account_circle), text: "我的"),
@@ -129,7 +131,50 @@ abstract class BasicScreenStateModel extends BaseModel {
 }
 
 ///继承自BaseModel的 类
-class AModel extends BaseModel {
-  ///变量命名规范
-  double amodelXXX = 0.0;
+//class AModel extends BaseModel {
+//  ///变量命名规范
+//  double amodelXXX = 0.0;
+//}
+
+class UserAuth extends BaseModel {
+
+  bool _isLogin = false;
+  String _token;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  set setToken(String token) {
+    _token = token;
+    saveToken(token);
+    _isLogin = true;
+    notifyListeners();
+  }
+
+  Future<Null> saveToken(String token) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setString("token", token);
+  }
+
+  Future<String> get token async{
+    if(!_isLogin){//未登录
+      return null;
+    }
+    if(_token!=null){//_token不为空
+      return token;
+    }
+    else{
+      final SharedPreferences prefs = await _prefs;
+      _token = prefs.getString("token");
+      _isLogin = true;
+      notifyListeners();
+      return _token;
+    }
+  }
+  Future<Null> clearState() async{
+    final SharedPreferences prefs = await _prefs;
+    prefs.clear();
+    _isLogin = false;
+    _token = null;
+    notifyListeners();
+  }
+
 }

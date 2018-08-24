@@ -17,6 +17,7 @@ dependencies:
   url_launcher: ^3.0.3
   intl: ^0.15.7
   json_annotation: any
+  shared_preferences: ^0.4.2
 
 dev_dependencies:
   flutter_test:
