@@ -13,8 +13,8 @@ class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   GlobalKey<FormState> _form = new GlobalKey();
-  String _userName="";
-  String _password="";
+  String _userName = "";
+  String _password = "";
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen>
                       hintText: "用户名",
                       border: UnderlineInputBorder(),
                     ),
-                    onFieldSubmitted: (value)=>_userName=value,
+                    onFieldSubmitted: (value) => _userName = value,
                   ),
                   TextFormField(
                     maxLength: 24,
@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen>
                       hintText: "密码",
                       border: UnderlineInputBorder(),
                     ),
-                    onFieldSubmitted: (value)=>_password=value,
+                    onFieldSubmitted: (value) => _password = value,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -99,27 +99,29 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
-  void _login() async{
-    if(_userName.trim()!=""&&_password.trim()!=""){
-      post(constants.loginAction,body:{
-        constants.mobile:_userName,
-        constants.password:_password
-      } ).then((response){
+
+  void _login() async {
+    if (_userName.trim() != "" && _password.trim() != "") {
+      post(constants.loginAction, body: {
+        constants.mobile: _userName,
+        constants.password: _password
+      }).then((response) {
         var result = json.decode(response.body);
-        if(result[constants.status]==constants.success)
+        if (result[constants.status] == constants.success)
           _showMessage("登录成功");
-        else _showMessage("用户名/密码错误!");
-
+        else
+          _showMessage("用户名/密码错误!");
       });
-
-    }else{
-      if(_userName.trim()=="") _showMessage("用户名不能为空!");
-      else _showMessage("密码不能为空!");
+    } else {
+      if (_userName.trim() == "")
+        _showMessage("用户名不能为空!");
+      else
+        _showMessage("密码不能为空!");
     }
-
-
   }
-  void _showMessage(String message){
-    Scaffold.of(_form.currentState.context).showSnackBar(SnackBar(content:Text(message)));
+
+  void _showMessage(String message) {
+    Scaffold.of(_form.currentState.context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 }

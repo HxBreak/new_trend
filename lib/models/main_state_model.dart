@@ -16,7 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 ///主数据模型，需要全局使用的数据在这里添加模型
 class MainStateModel extends Model
-    with BaseModel, IndexScreenStateModel, BasicScreenStateModel //, AModel
+    with BaseModel, IndexScreenStateModel, BasicScreenStateModel, UserAuthModel
+//, AModel
 {
   MainStateModel() {
     initApp();
@@ -136,11 +137,12 @@ abstract class BasicScreenStateModel extends BaseModel {
 //  double amodelXXX = 0.0;
 //}
 
-class UserAuth extends BaseModel {
-
+class UserAuthModel extends BaseModel {
   bool _isLogin = false;
   String _token;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  bool get isLogin => _isLogin;
 
   set setToken(String token) {
     _token = token;
@@ -154,14 +156,13 @@ class UserAuth extends BaseModel {
     prefs.setString("token", token);
   }
 
-  Future<String> get token async{
-    if(_token!=null){//_token不为空
+  Future<String> get token async {
+    if (_token != null) {
       return token;
-    }
-    else{
+    } else {
       final SharedPreferences prefs = await _prefs;
       _token = prefs.getString("token");
-      if(!_isLogin){//未登录
+      if (!_isLogin) {
         return null;
       }
       _isLogin = true;
@@ -169,12 +170,12 @@ class UserAuth extends BaseModel {
       return _token;
     }
   }
-  Future<Null> clearState() async{
+
+  Future<Null> clearState() async {
     final SharedPreferences prefs = await _prefs;
     prefs.clear();
     _isLogin = false;
     _token = null;
     notifyListeners();
   }
-
 }

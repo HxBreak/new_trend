@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_trend/screens/task_screen.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:new_trend/screens/screens.dart';
 import 'package:new_trend/models/models.dart';
@@ -43,7 +44,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void initTabController() async {
-    final model = ModelFinder<MainStateModel>().of(context);
+    final model = ScopedModel.of<MainStateModel>(context);
     await model.basicInited.future; //阻塞初始化状态，等待网络请求完成后初始化TabController
     model.basicScreenNavItems.forEach((e) {
       if ("${e['pageType']}".toLowerCase() == 'tabs') {
@@ -65,7 +66,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   _buildMainBody(BasicScreenStateModel state) {
     return state.basicIsCurrentPageFromNetwork || !state.basicInited.isCompleted
         ? _buildNetworkBody(state)
-        : Center(child: Text("Local Page"));
+        : state.basicCurrentSelNav == 3
+            ? TaskScreen(state)
+            : state.basicCurrentSelNav == 4
+                ? ProfileScreen(state)
+                : Center(
+                    child: Text("Not Ready"),
+                  ); //正常状态下当前不应当存在没有处理的页面, 保险起见处理一下
   }
 
   Widget _buildNetworkBody(BasicScreenStateModel state) {
@@ -132,6 +139,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   )
                 : null,
             body: _buildMainBody(state),
+            floatingActionButton: state.basicCurrentSelNav == 3 &&
+                    (state as MainStateModel).isLogin
+                ? FloatingActionButton(
+                    child: Icon(Icons.send),
+                    onPressed: () {},
+                  )
+                : null,
             bottomNavigationBar:
                 state.basicScreenStatus == CommonPageStatus.DONE
                     ? BottomNavigationBar(

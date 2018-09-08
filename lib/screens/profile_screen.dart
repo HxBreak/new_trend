@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' hide Image;
 
+import 'package:new_trend/models/models.dart';
+
 class ProfileScreen extends StatefulWidget {
+  final MainStateModel model;
+
+  ProfileScreen(this.model);
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
