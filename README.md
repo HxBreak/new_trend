@@ -1,6 +1,10 @@
-# new_trend
+﻿# new_trend
 
 A Simple Flutter project.
+
+## Notice
+
+> 编译环境应当使用时下最新的Dev环境
 
 ## 内容涵盖
 

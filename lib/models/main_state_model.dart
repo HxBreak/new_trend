@@ -16,7 +16,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 ///主数据模型，需要全局使用的数据在这里添加模型
 class MainStateModel extends Model
-    with BaseModel, IndexScreenStateModel, BasicScreenStateModel, UserAuthModel
+    with
+        BaseModel,
+        IndexScreenStateModel,
+        BasicScreenStateModel,
+        UserAuthModel,
+        TasksStateModel
 //, AModel
 {
   MainStateModel() {

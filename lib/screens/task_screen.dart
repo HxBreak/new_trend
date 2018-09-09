@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:new_trend/models/models.dart';
+import 'package:new_trend/widgets/widgets.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class TaskScreen extends StatefulWidget {
   final MainStateModel model;
@@ -28,6 +30,26 @@ class _TaskScreenState extends State<TaskScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return ScopedModelDescendant<MainStateModel>(
+      builder: (context, widget, state) {
+        return ListView.builder(
+          itemCount: state.taskList.length + 1,
+          itemBuilder: (context, i) {
+            if (i < state.taskList.length) {
+              return ListTile(
+                title: Text("data"),
+              );
+            }
+            if (state.taskStatus == CommonPageStatus.READY) {
+              state.tasksLoadMore(state.token);
+            }
+            return StatusListTile(
+              retry: () => state.tasksLoadMore(state.token),
+              status: state.taskStatus,
+            );
+          },
+        );
+      },
+    );
   }
 }

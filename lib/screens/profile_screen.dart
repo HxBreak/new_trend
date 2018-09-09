@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' hide Image;
+// import 'dart:ui' hide Image, TextStyle;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:new_trend/models/models.dart';
 
@@ -17,21 +17,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainStateModel>(
       builder: (context, widget, state) {
-        return Stack(
-          children: <Widget>[
-            Image.network("https://www.baidu.com/img/bd_logo1.png?where=super"),
-            ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                child: Column(
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Text("${state.isLogin}"),
-                    Text("${state.token}")
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        child: CircleAvatar(
+                          minRadius: 32.0,
+                          child: Text("k", style: TextStyle(fontSize: 24.0)),
+                        ),
+                        onTap: () {
+                          if (state.isLogin) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("是否退出?"),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                          child: Text("退出"),
+                                          onPressed: () {
+                                            state.logout();
+                                            if (Navigator.of(context)
+                                                .canPop()) {
+                                              Navigator.of(context).pop();
+                                            }
+                                          }),
+                                      FlatButton(
+                                        child: Text("取消"),
+                                        onPressed: () {
+                                          if (Navigator.of(context).canPop()) {
+                                            Navigator.of(context).pop();
+                                          }
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          } else {
+                            Navigator.of(context).pushNamed("login");
+                          }
+                        },
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        "${state.token ?? '点击图标登录'}",
+                        maxLines: 3,
+                        overflow: TextOverflow.fade,
+                      ),
+                    )
                   ],
                 ),
-              ),
-            ),
-          ],
+              )
+            ],
+          ),
         );
       },
     );
