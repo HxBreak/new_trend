@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen>
               var result = json.decode(response.body);
               if (result[constants.status] == constants.success) {
                 _showMessage("登录成功");
-                model.token = result['token'];
+                model.login(result['token']);
                 Navigator.of(context).pop();
               } else
                 _showMessage("用户名/密码错误!");
