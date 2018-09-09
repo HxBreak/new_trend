@@ -149,15 +149,9 @@ class UserAuthModel extends BaseModel {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   bool get isLogin => _isLogin;
+  String get token => _token;
 
-  set token(String token) {
-    _token = token;
-    saveToken(token);
-    _isLogin = true;
-    notifyListeners();
-  }
-
-  Future<Null> saveToken(String token) async {
+  Future<Null> _saveToken(String token) async {
     final SharedPreferences prefs = await _prefs;
     prefs.setString("token", token);
   }
@@ -175,13 +169,18 @@ class UserAuthModel extends BaseModel {
         .whenComplete(this.notifyListeners);
   }
 
-  String get token => _token;
-
   Future<Null> logout() async {
     final SharedPreferences prefs = await _prefs;
     prefs.remove("token");
     _isLogin = false;
     _token = null;
+    notifyListeners();
+  }
+
+  Future<Null> login(String token) async{
+    _saveToken(token);
+    _token = token;
+    _isLogin = true;
     notifyListeners();
   }
 }
