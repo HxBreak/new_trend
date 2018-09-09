@@ -21,6 +21,7 @@ class MainStateModel extends Model
 {
   MainStateModel() {
     initApp();
+    initAuth();
   }
 }
 
@@ -144,7 +145,7 @@ class UserAuthModel extends BaseModel {
 
   bool get isLogin => _isLogin;
 
-  set setToken(String token) {
+  set token(String token) {
     _token = token;
     saveToken(token);
     _isLogin = true;
@@ -156,24 +157,24 @@ class UserAuthModel extends BaseModel {
     prefs.setString("token", token);
   }
 
-  Future<String> get token async {
-    if (_token != null) {
-      return token;
-    } else {
-      final SharedPreferences prefs = await _prefs;
-      _token = prefs.getString("token");
-      if (!_isLogin) {
-        return null;
-      }
-      _isLogin = true;
-      notifyListeners();
-      return _token;
-    }
+  initAuth() {
+    _prefs
+        .then((p) => p.getString("token"))
+        .then((__token) {
+          _token = __token;
+          if (_token != null && _token != "") {
+            _isLogin = true;
+          }
+        })
+        .catchError((e) {})
+        .whenComplete(this.notifyListeners);
   }
 
-  Future<Null> clearState() async {
+  String get token => _token;
+
+  Future<Null> logout() async {
     final SharedPreferences prefs = await _prefs;
-    prefs.clear();
+    prefs.remove("token");
     _isLogin = false;
     _token = null;
     notifyListeners();

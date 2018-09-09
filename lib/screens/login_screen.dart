@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:new_trend/utils/constants.dart' as constants;
+import 'package:new_trend/models/models.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,8 +15,8 @@ class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   GlobalKey<FormState> _form = new GlobalKey();
-  String _userName = "";
-  String _password = "";
+  TextEditingController _userName = TextEditingController();
+  TextEditingController _password = TextEditingController();
 
   @override
   void initState() {
@@ -30,11 +32,17 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("用户注册"),
-      ),
-      body: Padding(
+    Widget _buildLogout(UserAuthModel state) {
+      return Center(
+        child: FlatButton(
+          child: Text("退出"),
+          onPressed: state.logout,
+        ),
+      );
+    }
+
+    Widget _buildLogin(UserAuthModel state) {
+      return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -47,21 +55,21 @@ class _LoginScreenState extends State<LoginScreen>
                 children: <Widget>[
                   FlutterLogo(size: 64.0),
                   TextFormField(
+                    controller: _userName,
                     maxLength: 32,
                     decoration: InputDecoration(
                       hintText: "用户名",
                       border: UnderlineInputBorder(),
                     ),
-                    onFieldSubmitted: (value) => _userName = value,
                   ),
                   TextFormField(
+                    controller: _password,
                     maxLength: 24,
                     obscureText: true,
                     decoration: InputDecoration(
                       hintText: "密码",
                       border: UnderlineInputBorder(),
                     ),
-                    onFieldSubmitted: (value) => _password = value,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -75,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen>
                           icon: Icon(Icons.hd),
                           label: Text("登录"),
                           onPressed: () {
-                            _login();
+                            _login(state);
                             _form.currentState.validate();
                           }),
                       FlatButton.icon(
@@ -96,24 +104,45 @@ class _LoginScreenState extends State<LoginScreen>
             )
           ],
         ),
+      );
+    }
+
+    return Scaffold(appBar: AppBar(
+      title: new ScopedModelDescendant<MainStateModel>(
+        builder: (context, widget, state) {
+          return Text("data");
+        },
       ),
-    );
+    ), body: ScopedModelDescendant<MainStateModel>(
+      builder: (context, weiget, state) {
+        return state.isLogin ? _buildLogout(state) : _buildLogin(state);
+      },
+    ));
   }
 
-  void _login() async {
-    if (_userName.trim() != "" && _password.trim() != "") {
+  void _login(UserAuthModel model) async {
+    if (_userName.text.trim() != "" && _password.text.trim() != "") {
       post(constants.loginAction, body: {
-        constants.mobile: _userName,
-        constants.password: _password
-      }).then((response) {
-        var result = json.decode(response.body);
-        if (result[constants.status] == constants.success)
-          _showMessage("登录成功");
-        else
-          _showMessage("用户名/密码错误!");
-      });
+        "username": _userName.text,
+        constants.password: _password.text
+      })
+          .then((response) {
+            if (response.statusCode != 200) {
+              throw Exception("登录失败 code:${response.statusCode}");
+            } else {
+              var result = json.decode(response.body);
+              if (result[constants.status] == constants.success) {
+                _showMessage("登录成功");
+                model.token = result['token'];
+                Navigator.of(context).pop();
+              } else
+                _showMessage("用户名/密码错误!");
+            }
+          })
+          .catchError((e) => _showMessage("错误: $e"))
+          .whenComplete(() {});
     } else {
-      if (_userName.trim() == "")
+      if (_userName.text.trim() == "")
         _showMessage("用户名不能为空!");
       else
         _showMessage("密码不能为空!");

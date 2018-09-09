@@ -10,19 +10,19 @@ class TrendApp extends StatelessWidget {
   final model = MainStateModel();
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'New Trend',
-      theme: new ThemeData(
-        primarySwatch: Colors.red,
+    return ScopedModel<MainStateModel>(
+      model: model,
+      child: new MaterialApp(
+        title: 'New Trend',
+        theme: new ThemeData(
+          primarySwatch: Colors.red,
+        ),
+        home: new MainScreen(),
+        routes: {
+          "login": (context) => LoginScreen(),
+          "register": (context) => RegisterScreen(),
+        },
       ),
-      home: ScopedModel<MainStateModel>(
-        model: model,
-        child: new MainScreen(),
-      ),
-      routes: {
-        "login": (context) => LoginScreen(),
-        "register": (context) => RegisterScreen(),
-      },
     );
   }
 }
