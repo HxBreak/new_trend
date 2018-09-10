@@ -134,7 +134,13 @@ class _ReleaseScreenState extends State<ReleaseScreen> {
     return showDialog(
         context: context,
         builder: (context) => SimpleDialog(
-              title: Text('奖励金额'),
+              title: Center(
+                child: Text(
+                  '奖励金额',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.blue),
+                ),
+              ),
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -144,11 +150,16 @@ class _ReleaseScreenState extends State<ReleaseScreen> {
                 FlatButton(
                     onPressed: () {
                       setState(() {
-                        reward = int.parse(_rewardController.value.toString());
+                        reward =
+                            int.parse(_rewardController.value.text.toString());
                       });
                       Navigator.pop(context);
                     },
-                    child: Text('确认'))
+                    child: Text(
+                      '确认',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.lightBlue),
+                    ))
               ],
             ));
   }
