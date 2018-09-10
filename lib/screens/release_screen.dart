@@ -12,6 +12,7 @@ class _ReleaseScreenState extends State<ReleaseScreen> {
       _rewardController;
   String title, description;
   int reward;
+  bool _onSubmit;
 
   @override
   void initState() {
@@ -19,6 +20,8 @@ class _ReleaseScreenState extends State<ReleaseScreen> {
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
     _rewardController = TextEditingController();
+    reward = 0;
+    _onSubmit = false;
   }
 
   @override
@@ -57,38 +60,76 @@ class _ReleaseScreenState extends State<ReleaseScreen> {
                   padding: EdgeInsets.all(8.0),
                   height: width / 1.5,
                   child:
-                      _buildTextField(_descriptionController, '描述您即将发布的任务', 5),
+                  _buildTextField(_descriptionController, '描述您即将发布的任务', 5),
                 ),
                 Divider(),
-                Container(
-                  padding: EdgeInsets.all(8.0),
-//                  color: Colors.black12,
-                  child: GestureDetector(
-                    onTap: _inputReward,
-                    child: ListTile(
-                      leading: Icon(Icons.attach_money),
-                      title: Text(
-                        '价格',
-//                    maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black26),
-                      ),
-                      trailing: Container(
-                        child: Text(
-                          reward.toString(),
-                          maxLines: 1,
-                          style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black26),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                _buildShowRewardTile(),
+                Divider(),
+                _buildSubmitButton()
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return MaterialButton(
+      height: 60.0,
+      elevation: 4.0,
+      color: Colors.lightGreen,
+      onPressed: () {
+        title = _titleController.value.text;
+        description = _descriptionController.value.text;
+        //TODO:添加提交网络部分逻辑
+        setState(() {
+          _onSubmit = true;
+          print(_onSubmit);
+        });
+        Future.delayed(Duration(seconds: 3)).then((_) {
+          setState(() {
+            _onSubmit = false;
+            print(_onSubmit);
+          });
+        });
+      },
+      child: _onSubmit
+          ? CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      )
+          : Text(
+        '发布',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShowRewardTile() {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: _inputReward,
+        child: ListTile(
+          leading: Icon(Icons.attach_money),
+          title: Text(
+            '价格',
+            style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black26),
+          ),
+          trailing: Container(
+            child: Text(
+              reward.toString(),
+              maxLines: 1,
+              style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black26),
             ),
           ),
         ),
@@ -106,7 +147,7 @@ class _ReleaseScreenState extends State<ReleaseScreen> {
       decoration: InputDecoration.collapsed(
           hintText: hintText,
           hintStyle: TextStyle(
-              fontSize: 20.0,
+              fontSize: 18.0,
               fontWeight: FontWeight.bold,
               color: Colors.black26)),
     );
@@ -116,51 +157,52 @@ class _ReleaseScreenState extends State<ReleaseScreen> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text('真的要放弃发布任务吗?'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('No'),
-                  onPressed: () => Navigator.pop(context, false),
-                ),
-                FlatButton(
-                  child: Text('Yes'),
-                  onPressed: () => Navigator.pop(context, true),
-                ),
-              ],
-            ));
+          title: Text('真的要放弃发布任务吗?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('No'),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () => Navigator.pop(context, true),
+            ),
+          ],
+        ));
   }
 
   Future<Null> _inputReward() {
     return showDialog(
         context: context,
         builder: (context) => SimpleDialog(
-              title: Center(
+          title: Center(
+            child: Text(
+              '奖励金额',
+              style: TextStyle(color: Colors.blue),
+            ),
+          ),
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _buildTextField(_rewardController, '请输入奖励金', 1,
+                  TextInputType.numberWithOptions()),
+            ),
+            FlatButton(
+                onPressed: () {
+                  if (_rewardController.value.text != "") {
+                    setState(() {
+                      reward = int.parse(
+                          _rewardController.value.text.toString());
+                    });
+                  }
+                  Navigator.pop(context);
+                },
                 child: Text(
-                  '奖励金额',
+                  '确认',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.blue),
-                ),
-              ),
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: _buildTextField(_rewardController, '请输入奖励金', 1,
-                      TextInputType.numberWithOptions()),
-                ),
-                FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        reward =
-                            int.parse(_rewardController.value.text.toString());
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      '确认',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.lightBlue),
-                    ))
-              ],
-            ));
+                      color: Colors.lightBlue, fontWeight: FontWeight.bold),
+                ))
+          ],
+        ));
   }
 }
