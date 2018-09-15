@@ -8,3 +8,5 @@ build/
 pubspec.lock
 .flutter-plugins
 .idea/
+ios/Podfile.lock
+ios/Podfile.lock

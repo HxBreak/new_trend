@@ -21,6 +21,7 @@ class TrendApp extends StatelessWidget {
         routes: {
           "login": (context) => LoginScreen(),
           "register": (context) => RegisterScreen(),
+          "addTask": (context) => AddTaskScreen(),
         },
       ),
     );
@@ -143,7 +144,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     (state as MainStateModel).isLogin
                 ? FloatingActionButton(
                     child: Icon(Icons.send),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("addTask");
+                    },
                   )
                 : null,
             bottomNavigationBar:

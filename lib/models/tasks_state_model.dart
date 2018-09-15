@@ -1,5 +1,4 @@
 import 'models.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -24,7 +23,7 @@ class TasksStateModel extends BaseModel {
           if (e['crowdfunding_tasks_list'].length == 0) {
             _status = CommonPageStatus.DONE;
           } else {
-            _status = CommonPageStatus.READY;
+            _status = CommonPageStatus.DONE;
           }
         })
         .catchError((e) => _status = CommonPageStatus.ERROR)

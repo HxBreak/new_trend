@@ -177,7 +177,7 @@ class UserAuthModel extends BaseModel {
     notifyListeners();
   }
 
-  Future<Null> login(String token) async{
+  Future<Null> login(String token) async {
     _saveToken(token);
     _token = token;
     _isLogin = true;

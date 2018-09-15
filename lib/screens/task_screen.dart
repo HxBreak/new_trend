@@ -37,7 +37,16 @@ class _TaskScreenState extends State<TaskScreen>
           itemBuilder: (context, i) {
             if (i < state.taskList.length) {
               return ListTile(
-                title: Text("data"),
+                title: Text("${state.taskList[i]['task_name']}"),
+                subtitle:
+                    Text("${state.taskList[i]['task_desc']}", maxLines: 3),
+                leading: CircleAvatar(
+                  child: Text(
+                    "${state.taskList[i]['reward']}",
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
+                  ),
+                ),
               );
             }
             if (state.taskStatus == CommonPageStatus.READY) {
