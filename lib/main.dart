@@ -88,7 +88,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Widget _buildTabView(BasicScreenStateModel state) {
     return TabBarView(
         controller: _tabMaps[state.basicCurrentTitleString],
-        children: List.generate<Widget>(
+        children: List.generate(
             state.basicScreenNavItems[state.basicCurrentSelNav]['tabItems']
                 .length, (i) {
           final e = state.basicScreenNavItems[state.basicCurrentSelNav]
